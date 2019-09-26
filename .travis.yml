@@ -13,3 +13,12 @@ script:
 sudo: false
 notifications:
   email: false
+
+addons:
+  artifacts:
+    s3_region: "ap-northeast-1"
+    paths:
+      - $(git ls-files -o --exclude-standard | tr "\n" ":")
+    debug: true
+    target-paths: $TRAVIS_REPO_SLUG/$TRAVIS_BRANCH
+    bucket: "oauth2-proxy-build"
