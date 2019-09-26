@@ -7,7 +7,7 @@ install:
   - GO111MODULE=on go mod download
 script:
   - ./configure && make test
-  - ./configure && make build
+  - ./configure && make dep
 #  - make docker-all
 #  - make docker-push-all
 
