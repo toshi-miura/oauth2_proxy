@@ -8,8 +8,8 @@ install:
 script:
   - ./configure && make test
   - ./configure && make build
-  - make docker-all
-  - make docker-push-all
+#  - make docker-all
+#  - make docker-push-all
 
 
 
