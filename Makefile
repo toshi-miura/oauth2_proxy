@@ -27,31 +27,31 @@ $(BINARY):
 
 .PHONY: docker
 docker:
-	docker build -f Dockerfile -t quay.io/pusher/oauth2_proxy:latest .
+	docker build -f Dockerfile -t toshimiura/oauth2_proxy:latest .
 
 .PHONY: docker-all
 docker-all: docker
-	docker build -f Dockerfile -t quay.io/pusher/oauth2_proxy:latest-amd64 .
-	docker build -f Dockerfile -t quay.io/pusher/oauth2_proxy:${VERSION} .
-	docker build -f Dockerfile -t quay.io/pusher/oauth2_proxy:${VERSION}-amd64 .
-	docker build -f Dockerfile.arm64 -t quay.io/pusher/oauth2_proxy:latest-arm64 .
-	docker build -f Dockerfile.arm64 -t quay.io/pusher/oauth2_proxy:${VERSION}-arm64 .
-	docker build -f Dockerfile.armv6 -t quay.io/pusher/oauth2_proxy:latest-armv6 .
-	docker build -f Dockerfile.armv6 -t quay.io/pusher/oauth2_proxy:${VERSION}-armv6 .
+	docker build -f Dockerfile -t toshimiura/oauth2_proxy:latest-amd64 .
+	docker build -f Dockerfile -t toshimiura/oauth2_proxy:${VERSION} .
+	docker build -f Dockerfile -t toshimiura/oauth2_proxy:${VERSION}-amd64 .
+	docker build -f Dockerfile.arm64 -t toshimiura/oauth2_proxy:latest-arm64 .
+	docker build -f Dockerfile.arm64 -t toshimiura/oauth2_proxy:${VERSION}-arm64 .
+	docker build -f Dockerfile.armv6 -t toshimiura/oauth2_proxy:latest-armv6 .
+	docker build -f Dockerfile.armv6 -t toshimiura/oauth2_proxy:${VERSION}-armv6 .
 
 .PHONY: docker-push
 docker-push:
-	docker push quay.io/pusher/oauth2_proxy:latest
+	docker push toshimiura/oauth2_proxy:latest
 
 .PHONY: docker-push-all
 docker-push-all: docker-push
-	docker push quay.io/pusher/oauth2_proxy:latest-amd64
-	docker push quay.io/pusher/oauth2_proxy:${VERSION}
-	docker push quay.io/pusher/oauth2_proxy:${VERSION}-amd64
-	docker push quay.io/pusher/oauth2_proxy:latest-arm64
-	docker push quay.io/pusher/oauth2_proxy:${VERSION}-arm64
-	docker push quay.io/pusher/oauth2_proxy:latest-armv6
-	docker push quay.io/pusher/oauth2_proxy:${VERSION}-armv6
+	docker push toshimiura/oauth2_proxy:latest-amd64
+	docker push toshimiura/oauth2_proxy:${VERSION}
+	docker push toshimiura/oauth2_proxy:${VERSION}-amd64
+	docker push toshimiura/oauth2_proxy:latest-arm64
+	docker push toshimiura/oauth2_proxy:${VERSION}-arm64
+	docker push toshimiura/oauth2_proxy:latest-armv6
+	docker push toshimiura/oauth2_proxy:${VERSION}-armv6
 
 .PHONY: test
 test: lint

@@ -8,7 +8,10 @@ install:
 script:
   - ./configure && make test
   - ./configure && make build
-  - ./configure && make docker
+  - make docker-all
+  - make docker-push-all
+
+
 
 sudo: false
 notifications:
