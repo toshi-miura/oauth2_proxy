@@ -7,6 +7,9 @@ install:
   - GO111MODULE=on go mod download
 script:
   - ./configure && make test
+  - ./configure && make build
+  - ./configure && make docker
+
 sudo: false
 notifications:
   email: false
