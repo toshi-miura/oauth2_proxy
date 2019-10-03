@@ -190,7 +190,7 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 		teams = append(teams, tp...)
 
 		//ここで、確認する
-		link=resp.Header.Get("Link")
+		link :=resp.Header.Get("Link")
 		fmt.Print("Hello world!!!!!!!!!!!!!!!!!!!!")
 		fmt.Print(link)
 
