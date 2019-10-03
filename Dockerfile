@@ -29,4 +29,8 @@ COPY --from=builder /go/src/github.com/pusher/oauth2_proxy/jwt_signing_key.pem /
 
 USER 2000:2000
 
-ENTRYPOINT ["/bin/oauth2_proxy"]
+COPY startup.sh /startup.sh
+RUN chmod 744 /startup.sh
+
+CMD ["/startup.sh"]
+# ENTRYPOINT ["/bin/oauth2_proxy"]
