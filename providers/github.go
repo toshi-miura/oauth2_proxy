@@ -192,7 +192,7 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 		//ここで、確認する
 		link :=resp.Header.Get("Link")
 		fmt.Print("Hello world!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-		if link != nil {
+		if link != "" {
 			fmt.Print("Not NIL")
 		}else{
 			fmt.Print("NIL")
