@@ -147,6 +147,7 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 		} `json:"organization"`
 	}
 
+	fmt.Print("Hello 1 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 	pn := 1
 	for {
 		params := url.Values{
@@ -160,6 +161,7 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 			Path:     path.Join(p.ValidateURL.Path, "/user/teams"),
 			RawQuery: params.Encode(),
 		}
+		fmt.Print("Hello 2 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
 		req, _ := http.NewRequest("GET", endpoint.String(), nil)
 		req.Header.Set("Accept", "application/vnd.github.v3+json")
@@ -171,6 +173,7 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 
 		body, err := ioutil.ReadAll(resp.Body)
 		resp.Body.Close()
+		fmt.Print("Hello 3 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 		if err != nil {
 			return false, err
 		}
@@ -186,6 +189,7 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 		if len(tp) == 0 {
 			break
 		}
+		fmt.Print(tp)
 
 		teams = append(teams, tp...)
 
