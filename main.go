@@ -28,7 +28,7 @@ func main() {
 	redisSentinelConnectionURLs := StringArray{}
 
 	config := flagSet.String("config", "", "path to config file")
-	showVersion := flagSet.Bool("version", false, "print version string")
+	showVersion := flagSet.Bool("version", true, "print version string")
 
 	flagSet.String("http-address", "127.0.0.1:4180", "[http://]<addr>:<port> or unix://<path> to listen on for HTTP clients")
 	flagSet.String("https-address", ":443", "<addr>:<port> to listen on for HTTPS clients")
@@ -132,7 +132,7 @@ func main() {
 	flagSet.Parse(os.Args[1:])
 
 	if *showVersion {
-		fmt.Printf("oauth2_proxy %s (built with %s)\n", VERSION, runtime.Version())
+		fmt.Printf("oauth2_proxy %s (built with %s)  %s \n", VERSION, runtime.Version(),"miura01")
 		return
 	}
 

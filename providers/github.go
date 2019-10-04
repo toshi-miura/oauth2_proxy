@@ -130,6 +130,8 @@ func (p *GitHubProvider) hasOrg(accessToken string) (bool, error) {
 
 func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 	// https://developer.github.com/v3/orgs/teams/#list-user-teams
+	
+	fmt.Println("in:hasOrgAndTeam")
 
 	var teams []struct {
 		Name string `json:"name"`
@@ -149,6 +151,8 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 
 	pn := 1
 	for {
+		fmt.Println("for:%s",pn)
+
 		params := url.Values{
 			"per_page": {"100"},
 			"page":     {strconv.Itoa(pn)},
@@ -190,9 +194,13 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 		teams = append(teams, tp...)
 
 		//ここで、確認する
-		link=resp.Header.Get("Link")
-		fmt.Print("Hello world!!!!!!!!!!!!!!!!!!!!")
-		fmt.Print(link)
+		fmt.Println("check header-----------")
+		fmt.Println(resp.Header.Get("Link"))
+		link:=resp.Header.Get("Link")		
+		fmt.Println(link)
+		rep1 := regexp.MustCompile(`(?s).*\<https://api.github.com/resource\?page=(.)\>; rel="last"`)
+		fmt.Println(rep1.ReplaceAllString(link, "$1"))
+		fmt.Println("check header--------------")
 
 		pn++
 	}
