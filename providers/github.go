@@ -12,6 +12,8 @@ import (
 	"regexp"
 	"github.com/pusher/oauth2_proxy/pkg/apis/sessions"
 	"github.com/pusher/oauth2_proxy/pkg/logger"
+	"strconv"
+
 )
 
 // GitHubProvider represents an GitHub based Identity Provider
@@ -177,13 +179,16 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 
 		body, err := ioutil.ReadAll(resp.Body)
 		
+		// <https://api.github.com/user/teams?page=1&per_page=100>; rel="prev", <https://api.github.com/user/teams?page=1&per_page=100>; rel="last", <https://api.github.com/user/teams?page=1&per_page=100>; rel="first"
 		fmt.Println("1.:link")
 		fmt.Println(resp.Header.Get("Link"))
 		link:=resp.Header.Get("Link")		
 		fmt.Println("2.:  %s",link)
 		rep1 := regexp.MustCompile(`(?s).*\<https://api.github.com/resource\?page=(.)&per_page=[0-9]+\>; rel="last".*`)
 		fmt.Println("3.:  %s",rep1.ReplaceAllString(link, "$1"))
+		last, _ = strconv.Atoi(rep1.ReplaceAllString(link, "$1"))
 		fmt.Println("4.:end  ")
+		fmt.Println("5.:end  %d",last)
 
 
 		resp.Body.Close()
@@ -207,10 +212,13 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 
 		teams = append(teams, tp...)
 
-		// <https://api.github.com/user/teams?page=1&per_page=100>; rel="prev", <https://api.github.com/user/teams?page=1&per_page=100>; rel="last", <https://api.github.com/user/teams?page=1&per_page=100>; rel="first"
+		
         
 
-
+		if pn == last {
+			fmt.Println("5.:end  %d",last,pn)
+			break
+		}
 
 		pn++
 	}
