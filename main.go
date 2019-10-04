@@ -133,7 +133,7 @@ func main() {
 
 	if *showVersion {
 		fmt.Printf("oauth2_proxy %s (built with %s)  %s \n", VERSION, runtime.Version(),"miura01")
-		return
+		
 	}
 
 	opts := NewOptions()
