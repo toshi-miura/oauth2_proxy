@@ -12,7 +12,7 @@ import (
 	"regexp"
 	"github.com/pusher/oauth2_proxy/pkg/apis/sessions"
 	"github.com/pusher/oauth2_proxy/pkg/logger"
-	"strconv"
+
 
 )
 
