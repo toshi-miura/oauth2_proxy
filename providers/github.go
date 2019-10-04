@@ -177,8 +177,9 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 
 		body, err := ioutil.ReadAll(resp.Body)
 		
-		fmt.Println("link---- before")
+		fmt.Println("link---------- before")
 		fmt.Println(resp.Header.Get("Link"))
+		fmt.Println("link---------- before")
 
 		resp.Body.Close()
 		fmt.Println("Hello 3 !!!")
