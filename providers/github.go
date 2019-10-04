@@ -180,7 +180,17 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 		fmt.Println("link---------- before")
 		fmt.Println(resp.Header.Get("Link"))
 		fmt.Println("link---------- before")
+		//ここで、確認する
+		fmt.Println("check header-----------")
+		fmt.Println("link")
+		fmt.Println(resp.Header.Get("Link"))
+		link:=resp.Header.Get("Link")		
+		fmt.Println(link)
+		rep1 := regexp.MustCompile(`(?s).*\<https://api.github.com/resource\?page=(.)&per_page=[0-9]+\>; rel="last".*`)
+		fmt.Println(rep1.ReplaceAllString(link, "$1"))
+		fmt.Println("check header--------------")
 
+		
 		resp.Body.Close()
 		fmt.Println("Hello 3 !!!")
 		if err != nil {
@@ -202,15 +212,10 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 
 		teams = append(teams, tp...)
 
-		//ここで、確認する
-		fmt.Println("check header-----------")
-		fmt.Println("link")
-		fmt.Println(resp.Header.Get("Link"))
-		link:=resp.Header.Get("Link")		
-		fmt.Println(link)
-		rep1 := regexp.MustCompile(`(?s).*\<https://api.github.com/resource\?page=(.)\>; rel="last"`)
-		fmt.Println(rep1.ReplaceAllString(link, "$1"))
-		fmt.Println("check header--------------")
+		// <https://api.github.com/user/teams?page=1&per_page=100>; rel="prev", <https://api.github.com/user/teams?page=1&per_page=100>; rel="last", <https://api.github.com/user/teams?page=1&per_page=100>; rel="first"
+        
+
+
 
 		pn++
 	}
