@@ -149,7 +149,7 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 		} `json:"organization"`
 	}
 
-	fmt.Print("Hello 1 !!!")
+	fmt.Println("Hello 1 !!!")
 	pn := 1
 	for {
 		fmt.Println("for:%s",pn)
@@ -165,7 +165,7 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 			Path:     path.Join(p.ValidateURL.Path, "/user/teams"),
 			RawQuery: params.Encode(),
 		}
-		fmt.Print("Hello 2 !!!")
+		fmt.Println("Hello 2 !!!")
 
 		req, _ := http.NewRequest("GET", endpoint.String(), nil)
 		req.Header.Set("Accept", "application/vnd.github.v3+json")
@@ -176,8 +176,12 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 		}
 
 		body, err := ioutil.ReadAll(resp.Body)
+		
+		fmt.Println("link---- before")
+		fmt.Println(resp.Header.Get("Link"))
+
 		resp.Body.Close()
-		fmt.Print("Hello 3 !!!")
+		fmt.Println("Hello 3 !!!")
 		if err != nil {
 			return false, err
 		}
@@ -199,6 +203,7 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 
 		//ここで、確認する
 		fmt.Println("check header-----------")
+		fmt.Println("link")
 		fmt.Println(resp.Header.Get("Link"))
 		link:=resp.Header.Get("Link")		
 		fmt.Println(link)
