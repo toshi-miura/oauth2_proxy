@@ -152,7 +152,7 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 	fmt.Println("Hello 1 !!!")
 	pn := 1
 	for {
-		fmt.Println("for:%s",pn)
+		fmt.Println("for index : %d ",pn)
 
 		params := url.Values{
 			"per_page": {"100"},
@@ -165,7 +165,7 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 			Path:     path.Join(p.ValidateURL.Path, "/user/teams"),
 			RawQuery: params.Encode(),
 		}
-		fmt.Println("Hello 2 !!!")
+		
 
 		req, _ := http.NewRequest("GET", endpoint.String(), nil)
 		req.Header.Set("Accept", "application/vnd.github.v3+json")
@@ -177,22 +177,17 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 
 		body, err := ioutil.ReadAll(resp.Body)
 		
-		fmt.Println("link---------- before")
-		fmt.Println(resp.Header.Get("Link"))
-		fmt.Println("link---------- before")
-		//ここで、確認する
-		fmt.Println("check header-----------")
-		fmt.Println("link")
+		fmt.Println("1.:link")
 		fmt.Println(resp.Header.Get("Link"))
 		link:=resp.Header.Get("Link")		
-		fmt.Println(link)
+		fmt.Println("2.:  %s",link)
 		rep1 := regexp.MustCompile(`(?s).*\<https://api.github.com/resource\?page=(.)&per_page=[0-9]+\>; rel="last".*`)
-		fmt.Println(rep1.ReplaceAllString(link, "$1"))
-		fmt.Println("check header--------------")
+		fmt.Println("3.:  %s",rep1.ReplaceAllString(link, "$1"))
+		fmt.Println("4.:end  ")
 
-		
+
 		resp.Body.Close()
-		fmt.Println("Hello 3 !!!")
+		
 		if err != nil {
 			return false, err
 		}
