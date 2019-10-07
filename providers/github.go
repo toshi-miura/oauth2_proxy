@@ -153,7 +153,7 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 	
 	pn := 1
 	for {
-		fmt.Println("for index : %d ", pn)
+		logger.Printf("for index : %d ", pn)
 
 		params := url.Values{
 			"per_page": {"100"},
@@ -178,6 +178,7 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 		body, err := ioutil.ReadAll(resp.Body)
 
 		// <https://api.github.com/user/teams?page=1&per_page=100>; rel="prev", <https://api.github.com/user/teams?page=1&per_page=100>; rel="last", <https://api.github.com/user/teams?page=1&per_page=100>; rel="first"
+		logger.Printf("0.:endpoint %s",endpoint.String())
 		logger.Printf("1.:link")
 		logger.Printf(resp.Header.Get("Link"))
 		link := resp.Header.Get("Link")
@@ -185,8 +186,7 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 		rep1 := regexp.MustCompile(`(?s).*\<https://api.github.com/user/teams\?page=(.)&per_page=[0-9]+\>; rel="last".*`)
 		logger.Printf("3.:  %s", rep1.ReplaceAllString(link, "$1"))
 		last, _ := strconv.Atoi(rep1.ReplaceAllString(link, "$1"))
-		logger.Printf("4.:end  ")
-		logger.Printf("5.:end  %d", last)
+		logger.Printf("4.:end  %d", last)
 
 		resp.Body.Close()
 
