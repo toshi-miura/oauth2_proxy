@@ -156,7 +156,7 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 		logger.Printf("for index : %d ", pn)
 
 		params := url.Values{
-			"per_page": {"100"},
+			"per_page": {"10"},
 			"page":     {strconv.Itoa(pn)},
 		}
 
@@ -176,6 +176,14 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 		}
 
 		body, err := ioutil.ReadAll(resp.Body)
+
+		// link header may not be obtained
+		// When paging is not required and all data can be retrieved with a single call
+
+		// When link header can be obtained
+		// 1. When paging is required (Example: When the data size is 100 and the page size is 99 or less)
+		// 2. When it exceeds the paging frame (Example: When there is only 10 records but the second page is called with a page size of 100)
+
 
 		// <https://api.github.com/user/teams?page=1&per_page=100>; rel="prev", <https://api.github.com/user/teams?page=1&per_page=100>; rel="last", <https://api.github.com/user/teams?page=1&per_page=100>; rel="first"
 		logger.Printf("0.:endpoint %s",endpoint.String())
@@ -209,7 +217,7 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 
 		teams = append(teams, tp...)
 
-		if pn == last {
+		if pn == last {			
 			logger.Printf("6.:break  %d:%d", last, pn)
 			break
 		}else{
