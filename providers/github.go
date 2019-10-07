@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"path"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -148,6 +149,7 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 	}
 
 	pn := 1
+	last:= 0
 	for {
 		params := url.Values{
 			"per_page": {"100"},
@@ -170,6 +172,33 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 		}
 
 		body, err := ioutil.ReadAll(resp.Body)
+
+		if last == 0 {
+			// link header may not be obtained
+			// When paging is not required and all data can be retrieved with a single call
+
+			// Conditions for obtaining the link header.
+			// 1. When paging is required (Example: When the data size is 100 and the page size is 99 or less)
+			// 2. When it exceeds the paging frame (Example: When there is only 10 records but the second page is called with a page size of 100)
+
+			// link herder at not last page
+			// <https://api.github.com/user/teams?page=1&per_page=100>; rel="prev", <https://api.github.com/user/teams?page=1&per_page=100>; rel="last", <https://api.github.com/user/teams?page=1&per_page=100>; rel="first"
+			// link herder at last page (doesn't exist last info)
+			// <https://api.github.com/user/teams?page=3&per_page=10>; rel="prev", <https://api.github.com/user/teams?page=1&per_page=10>; rel="first"
+
+			logger.Printf("1:endpoint :[%s]",endpoint.String())
+			logger.Printf("2:link header:[%s]",resp.Header.Get("Link"))		
+			link := resp.Header.Get("Link")
+			rep1 := regexp.MustCompile(`(?s).*\<https://api.github.com/user/teams\?page=(.)&per_page=[0-9]+\>; rel="last".*`)
+			i,converr:= strconv.Atoi(rep1.ReplaceAllString(link, "$1"))
+			if converr != nil{
+				logger.Printf("3:doesn't exist last page info. ")
+			}else{
+				last = i
+				logger.Printf("3:last page index  :[%d]", last)
+			}
+		}
+
 		resp.Body.Close()
 		if err != nil {
 			return false, err
@@ -188,6 +217,17 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 		}
 
 		teams = append(teams, tp...)
+		
+		if pn == last {			
+			logger.Printf("last page break  now:[%d]  last[%d]",  pn,last)
+			break
+		}
+		if last == 0 {			
+			logger.Printf("doesn't exist last page info. Now the last page.")
+			break
+		}
+
+
 		pn++
 	}
 
