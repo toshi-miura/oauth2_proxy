@@ -7,13 +7,12 @@ import (
 	"net/http"
 	"net/url"
 	"path"
+	"regexp"
 	"strconv"
 	"strings"
-	"regexp"
+
 	"github.com/pusher/oauth2_proxy/pkg/apis/sessions"
 	"github.com/pusher/oauth2_proxy/pkg/logger"
-
-
 )
 
 // GitHubProvider represents an GitHub based Identity Provider
@@ -132,7 +131,7 @@ func (p *GitHubProvider) hasOrg(accessToken string) (bool, error) {
 
 func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 	// https://developer.github.com/v3/orgs/teams/#list-user-teams
-	
+
 	fmt.Println("in:hasOrgAndTeam")
 
 	var teams []struct {
@@ -154,7 +153,7 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 	fmt.Println("Hello 1 !!!")
 	pn := 1
 	for {
-		fmt.Println("for index : %d ",pn)
+		fmt.Println("for index : %d ", pn)
 
 		params := url.Values{
 			"per_page": {"100"},
@@ -167,7 +166,6 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 			Path:     path.Join(p.ValidateURL.Path, "/user/teams"),
 			RawQuery: params.Encode(),
 		}
-		
 
 		req, _ := http.NewRequest("GET", endpoint.String(), nil)
 		req.Header.Set("Accept", "application/vnd.github.v3+json")
@@ -182,17 +180,16 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 		// <https://api.github.com/user/teams?page=1&per_page=100>; rel="prev", <https://api.github.com/user/teams?page=1&per_page=100>; rel="last", <https://api.github.com/user/teams?page=1&per_page=100>; rel="first"
 		fmt.Println("1.:link")
 		fmt.Println(resp.Header.Get("Link"))
-		link:=resp.Header.Get("Link")		
-		fmt.Println("2.:  %s",link)
+		link := resp.Header.Get("Link")
+		fmt.Println("2.:  %s", link)
 		rep1 := regexp.MustCompile(`(?s).*\<https://api.github.com/resource\?page=(.)&per_page=[0-9]+\>; rel="last".*`)
-		fmt.Println("3.:  %s",rep1.ReplaceAllString(link, "$1"))
+		fmt.Println("3.:  %s", rep1.ReplaceAllString(link, "$1"))
 		last, _ := strconv.Atoi(rep1.ReplaceAllString(link, "$1"))
 		fmt.Println("4.:end  ")
-		fmt.Println("5.:end  %d",last)
-
+		fmt.Println("5.:end  %d", last)
 
 		resp.Body.Close()
-		
+
 		if err != nil {
 			return false, err
 		}
@@ -212,11 +209,8 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 
 		teams = append(teams, tp...)
 
-		
-        
-
 		if pn == last {
-			fmt.Println("5.:end  %d",last,pn)
+			fmt.Println("6.:end  %d", last, pn)
 			break
 		}
 
