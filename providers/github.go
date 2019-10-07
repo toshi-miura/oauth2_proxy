@@ -150,7 +150,7 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 		} `json:"organization"`
 	}
 
-	fmt.Println("Hello 1 !!!")
+	
 	pn := 1
 	for {
 		fmt.Println("for index : %d ", pn)
@@ -178,15 +178,15 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 		body, err := ioutil.ReadAll(resp.Body)
 
 		// <https://api.github.com/user/teams?page=1&per_page=100>; rel="prev", <https://api.github.com/user/teams?page=1&per_page=100>; rel="last", <https://api.github.com/user/teams?page=1&per_page=100>; rel="first"
-		fmt.Println("1.:link")
-		fmt.Println(resp.Header.Get("Link"))
+		logger.Printf(("1.:link")
+		logger.Printf((resp.Header.Get("Link"))
 		link := resp.Header.Get("Link")
-		fmt.Println("2.:  %s", link)
-		rep1 := regexp.MustCompile(`(?s).*\<https://api.github.com/resource\?page=(.)&per_page=[0-9]+\>; rel="last".*`)
-		fmt.Println("3.:  %s", rep1.ReplaceAllString(link, "$1"))
+		logger.Printf(("2.:  %s", link)
+		rep1 := regexp.MustCompile(`(?s).*\<https://api.github.com/user/teams\?page=(.)&per_page=[0-9]+\>; rel="last".*`)
+		logger.Printf(("3.:  %s", rep1.ReplaceAllString(link, "$1"))
 		last, _ := strconv.Atoi(rep1.ReplaceAllString(link, "$1"))
-		fmt.Println("4.:end  ")
-		fmt.Println("5.:end  %d", last)
+		logger.Printf(("4.:end  ")
+		logger.Printf(("5.:end  %d", last)
 
 		resp.Body.Close()
 
@@ -210,8 +210,10 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 		teams = append(teams, tp...)
 
 		if pn == last {
-			fmt.Println("6.:end  %d", last, pn)
+			logger.Printf("6.:break  %d:%d", last, pn)
 			break
+		}else{
+			logger.Printf("6.:for next loop  %d:%d", last, pn)
 		}
 
 		pn++
