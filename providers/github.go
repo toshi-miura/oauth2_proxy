@@ -186,15 +186,12 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 
 
 		// <https://api.github.com/user/teams?page=1&per_page=100>; rel="prev", <https://api.github.com/user/teams?page=1&per_page=100>; rel="last", <https://api.github.com/user/teams?page=1&per_page=100>; rel="first"
-		logger.Printf("0.:endpoint %s",endpoint.String())
-		logger.Printf("1.:link")
-		logger.Printf(resp.Header.Get("Link"))
+		logger.Printf("1:endpoint :%s",endpoint.String())
+		logger.Printf("2:link header:%s",resp.Header.Get("Link"))		
 		link := resp.Header.Get("Link")
-		logger.Printf("2.:  %s", link)
 		rep1 := regexp.MustCompile(`(?s).*\<https://api.github.com/user/teams\?page=(.)&per_page=[0-9]+\>; rel="last".*`)
-		logger.Printf("3.:  %s", rep1.ReplaceAllString(link, "$1"))
 		last, _ := strconv.Atoi(rep1.ReplaceAllString(link, "$1"))
-		logger.Printf("4.:end  %d", last)
+		logger.Printf("3:last page index  :[%d]", last)
 
 		resp.Body.Close()
 
@@ -211,6 +208,7 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 			return false, fmt.Errorf("%s unmarshaling %s", err, body)
 		}
 		if len(tp) == 0 {
+			logger.Printf("team info len is zero  now:[%d]  last[%d]",  pn,last)
 			break
 		}
 		fmt.Print(tp)
@@ -218,7 +216,7 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 		teams = append(teams, tp...)
 
 		if pn == last {			
-			logger.Printf("6.:break  %d:%d", last, pn)
+			logger.Printf("last page break  now:[%d]  last[%d]",  pn,last)
 			break
 		}else{
 			logger.Printf("6.:for next loop  %d:%d", last, pn)
