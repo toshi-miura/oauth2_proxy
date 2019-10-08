@@ -190,8 +190,9 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 			link := resp.Header.Get("Link")
 			rep1 := regexp.MustCompile(`(?s).*\<https://api.github.com/user/teams\?page=(.)&per_page=[0-9]+\>; rel="last".*`)
 			i,converr:= strconv.Atoi(rep1.ReplaceAllString(link, "$1"))
-			if converr != nil{
-			}else{
+			
+			// If the last page cannot be taken from the link in the http header, the last variable remains zero
+			if converr == nil{
 				last = i
 			}
 		}
