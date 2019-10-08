@@ -186,13 +186,12 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 			// link header at last page (doesn't exist last info)
 			// <https://api.github.com/user/teams?page=3&per_page=10>; rel="prev", <https://api.github.com/user/teams?page=1&per_page=10>; rel="first"
 
-
 			link := resp.Header.Get("Link")
 			rep1 := regexp.MustCompile(`(?s).*\<https://api.github.com/user/teams\?page=(.)&per_page=[0-9]+\>; rel="last".*`)
-			i,converr:= strconv.Atoi(rep1.ReplaceAllString(link, "$1"))
-			
+			i, converr := strconv.Atoi(rep1.ReplaceAllString(link, "$1"))
+
 			// If the last page cannot be taken from the link in the http header, the last variable remains zero
-			if converr == nil{
+			if converr == nil {
 				last = i
 			}
 		}
@@ -215,14 +214,13 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 		}
 
 		teams = append(teams, tp...)
-		
-		if pn == last {			
-			break
-		}
-		if last == 0 {			
-			break
-		}
 
+		if pn == last {
+			break
+		}
+		if last == 0 {
+			break
+		}
 
 		pn++
 	}
