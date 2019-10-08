@@ -149,7 +149,7 @@ func (p *GitHubProvider) hasOrgAndTeam(accessToken string) (bool, error) {
 	}
 
 	pn := 1
-	last:= 0
+	last := 0
 	for {
 		params := url.Values{
 			"per_page": {"100"},
