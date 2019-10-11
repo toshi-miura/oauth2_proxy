@@ -76,7 +76,7 @@ func (p *GitHubProvider) hasOrg(accessToken string) (bool, error) {
 	pn := 1
 	for {
 		params := url.Values{
-			"per_page": {"100"},
+			"per_page": {"5"},
 			"page":     {strconv.Itoa(pn)},
 		}
 
