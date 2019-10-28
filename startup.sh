@@ -8,6 +8,7 @@ export OAUTH2_PROXY_COOKIE_SECRET=${OAUTH2_PROXY_COOKIE_SECRET}
 
 /bin/oauth2_proxy \
     -provider="github" \
+    --htpasswd-file="/etc/htpasswd.file" \
     -github-org="${OAUTH2_PROXY_GITHUB_ORG}" \
     -github-team="${OAUTH2_PROXY_GITHUB_TEAM}" \
     -http-address="0.0.0.0:4180" \
