@@ -30,6 +30,7 @@ COPY --from=builder /go/src/github.com/pusher/oauth2_proxy/jwt_signing_key.pem /
 USER 2000:2000
 
 COPY startup.sh /startup.sh
+COPY .htpasswd /etc/htpasswd.file
 
 
 CMD ["/startup.sh"]
