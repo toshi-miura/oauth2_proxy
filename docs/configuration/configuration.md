@@ -38,12 +38,14 @@ An example [oauth2_proxy.cfg]({{ site.gitweb }}/contrib/oauth2_proxy.cfg.example
 | `-cookie-refresh` | duration | refresh the cookie after this duration; `0` to disable | |
 | `-cookie-secret` | string | the seed string for secure cookies (optionally base64 encoded) | |
 | `-cookie-secure` | bool | set secure (HTTPS) cookie flag | true |
+| `-cookie-samesite` | string | set SameSite cookie attribute (ie: `"lax"`, `"strict"`, `"none"`, or `""`). | `""` |
 | `-custom-templates-dir` | string | path to custom html templates | |
 | `-display-htpasswd-form` | bool | display username / password login form if an htpasswd file is provided | true |
 | `-email-domain` | string | authenticate emails with the specified domain (may be given multiple times). Use `*` to authenticate any email | |
 | `-extra-jwt-issuers` | string | if `-skip-jwt-bearer-tokens` is set, a list of extra JWT `issuer=audience` pairs (where the issuer URL has a `.well-known/openid-configuration` or a `.well-known/jwks.json`) | |
 | `-exclude-logging-paths` | string | comma separated list of paths to exclude from logging, eg: `"/ping,/path2"` |`""` (no paths excluded) |
 | `-flush-interval` | duration | period between flushing response buffers when streaming responses | `"1s"` |
+| `-force-https` | bool | enforce https redirect | `false` |
 | `-banner` | string | custom banner string. Use `"-"` to disable default banner. | |
 | `-footer` | string | custom footer string. Use `"-"` to disable default footer. | |
 | `-gcp-healthchecks` | bool | will enable `/liveness_check`, `/readiness_check`, and `/` (with the proper user-agent) endpoints that will make it work well with GCP App Engine and GKE Ingresses | false |
@@ -75,19 +77,23 @@ An example [oauth2_proxy.cfg]({{ site.gitweb }}/contrib/oauth2_proxy.cfg.example
 | `-pass-user-headers` | bool | pass X-Forwarded-User and X-Forwarded-Email information to upstream | true |
 | `-profile-url` | string | Profile access endpoint | |
 | `-provider` | string | OAuth provider | google |
+| `-provider-display-name` | string | Override the provider's name with the given string; used for the sign-in page | (depends on provider) |
 | `-ping-path` | string | the ping endpoint that can be used for basic health checks | `"/ping"` |
 | `-proxy-prefix` | string | the url root path that this proxy should be nested under (e.g. /`<oauth2>/sign_in`) | `"/oauth2"` |
 | `-proxy-websockets` | bool | enables WebSocket proxying | true |
 | `-pubjwk-url` | string | JWK pubkey access endpoint: required by login.gov | |
 | `-redeem-url` | string | Token redemption endpoint | |
 | `-redirect-url` | string | the OAuth Redirect URL. ie: `"https://internalapp.yourcompany.com/oauth2/callback"` | |
+| `-redis-cluster-connection-urls` | string \| list | List of Redis cluster connection URLs (eg redis://HOST[:PORT]). Used in conjunction with `--redis-use-cluster` | |
 | `-redis-connection-url` | string | URL of redis server for redis session storage (eg: `redis://HOST[:PORT]`) | |
 | `-redis-sentinel-master-name` | string | Redis sentinel master name. Used in conjunction with `--redis-use-sentinel` | |
 | `-redis-sentinel-connection-urls` | string \| list | List of Redis sentinel connection URLs (eg `redis://HOST[:PORT]`). Used in conjunction with `--redis-use-sentinel` | |
+| `-redis-use-cluster` | bool | Connect to redis cluster. Must set `--redis-cluster-connection-urls` to use this feature | false |
 | `-redis-use-sentinel` | bool | Connect to redis via sentinels. Must set `--redis-sentinel-master-name` and `--redis-sentinel-connection-urls` to use this feature | false |
 | `-request-logging` | bool | Log requests | true |
 | `-request-logging-format` | string | Template for request log lines | see [Logging Configuration](#logging-configuration) |
 | `-resource` | string | The resource that is protected (Azure AD only) | |
+| `-reverse-proxy` | bool | are we running behind a reverse proxy, controls whether headers like X-Real-Ip are accepted | false | 
 | `-scope` | string | OAuth scope specification | |
 | `-session-store-type` | string | Session data storage backend | cookie |
 | `-set-xauthrequest` | bool | set X-Auth-Request-User and X-Auth-Request-Email response headers (useful in Nginx auth_request mode) | false |
@@ -105,18 +111,18 @@ An example [oauth2_proxy.cfg]({{ site.gitweb }}/contrib/oauth2_proxy.cfg.example
 | `-standard-logging-format` | string | Template for standard log lines | see [Logging Configuration](#logging-configuration) |
 | `-tls-cert-file` | string | path to certificate file | |
 | `-tls-key-file` | string | path to private key file | |
-| `-upstream` | string \| list | the http url(s) of the upstream endpoint or `file://` paths for static files. Routing is based on the path | |
+| `-upstream` | string \| list | the http url(s) of the upstream endpoint, file:// paths for static files or `static://<status_code>` for static response. Routing is based on the path | |
 | `-validate-url` | string | Access token validation endpoint | |
 | `-version` | n/a | print version string | |
 | `-whitelist-domain` | string \| list | allowed domains for redirection after authentication. Prefix domain with a `.` to allow subdomains (eg `.example.com`) | |
 
-Note, when using the `whitelist-domain` option, any domain prefixed with a `.` will allow any subdomain of the specified domain as a valid redirect URL.
+Note: when using the `whitelist-domain` option, any domain prefixed with a `.` will allow any subdomain of the specified domain as a valid redirect URL. By default, only empty ports are allowed. This translates to allowing the default port of the URL's protocol (80 for HTTP, 443 for HTTPS, etc.) since browsers omit them. To allow only a specific port, add it to the whitelisted domain: `example.com:8080`. To allow any port, use `*`: `example.com:*`.
 
 See below for provider specific options
 
 ### Upstreams Configuration
 
-`oauth2_proxy` supports having multiple upstreams, and has the option to pass requests on to HTTP(S) servers or serve static files from the file system. HTTP and HTTPS upstreams are configured by providing a URL such as `http://127.0.0.1:8080/` for the upstream parameter, that will forward all authenticated requests to be forwarded to the upstream server. If you instead provide `http://127.0.0.1:8080/some/path/` then it will only be requests that start with `/some/path/` which are forwarded to the upstream.
+`oauth2_proxy` supports having multiple upstreams, and has the option to pass requests on to HTTP(S) servers or serve static files from the file system. HTTP and HTTPS upstreams are configured by providing a URL such as `http://127.0.0.1:8080/` for the upstream parameter, this will forward all authenticated requests to the upstream server. If you instead provide `http://127.0.0.1:8080/some/path/` then it will only be requests that start with `/some/path/` which are forwarded to the upstream.
 
 Static file paths are configured as a file:// URL. `file:///var/www/static/` will serve the files from that directory at `http://[oauth2_proxy url]/var/www/static/`, which may not be what you want. You can provide the path to where the files should be available by adding a fragment to the configured URL. The value of the fragment will then be used to specify which path the files are available at. `file:///var/www/static/#/static/` will ie. make `/var/www/static/` available at `http://[oauth2_proxy url]/static/`.
 
@@ -171,7 +177,7 @@ Available variables for auth logging:
 
 | Variable | Example | Description |
 | --- | --- | --- |
-| Client | 74.125.224.72 | The client/remote IP address. Will use the X-Real-IP header it if exists. |
+| Client | 74.125.224.72 | The client/remote IP address. Will use the X-Real-IP header it if exists & reverse-proxy is set to true. |
 | Host  | domain.com | The value of the Host header. |
 | Protocol | HTTP/1.0 | The request protocol. |
 | RequestMethod | GET | The request method. |
@@ -199,7 +205,7 @@ Available variables for request logging:
 
 | Variable | Example | Description |
 | --- | --- | --- |
-| Client | 74.125.224.72 | The client/remote IP address. Will use the X-Real-IP header it if exists. |
+| Client | 74.125.224.72 | The client/remote IP address. Will use the X-Real-IP header it if exists & reverse-proxy is set to true. |
 | Host  | domain.com | The value of the Host header. |
 | Protocol | HTTP/1.0 | The request protocol. |
 | RequestDuration | 0.001 | The time in seconds that a request took to process. |
