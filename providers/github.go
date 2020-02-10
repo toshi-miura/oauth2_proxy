@@ -10,6 +10,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"httputil"
 
 	"github.com/pusher/oauth2_proxy/pkg/apis/sessions"
 	"github.com/pusher/oauth2_proxy/pkg/logger"
@@ -90,6 +91,19 @@ func (p *GitHubProvider) hasOrg(accessToken string) (bool, error) {
 		req.Header.Set("Accept", "application/vnd.github.v3+json")
 		req.Header.Set("Authorization", fmt.Sprintf("token %s", accessToken))
 		resp, err := http.DefaultClient.Do(req)
+
+		// ------------------------------------------------------------------
+		// ------------------------------------------------------------------
+		fmt.Printf("hasOrg-----------------------------------------------------")
+		dump, _ := httputil.DumpRequest(req, true)
+		fmt.Printf("%q", dump)
+		res, err := client.Do(req)
+		dump2, _ := httputil.DumpResponse(resp, true)
+		fmt.Printf("%q", dump2)
+		fmt.Printf("----------------------------------------------------------")
+		// ------------------------------------------------------------------
+		// ------------------------------------------------------------------
+
 		if err != nil {
 			return false, err
 		}
